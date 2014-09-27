@@ -6,41 +6,56 @@
 
 usage() {
 	
-	echo " NmapMe (v 0.1) 													"
-	echo " USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS]			"
-	echo "																	"		
-	echo " REQUIRED                                           				"
-	echo "         -t  Target IP range.                						"
-	echo "                                           						"
-	echo " OPTIONAL                                           				"
-	echo "         -s  Divide scans into chunk of maximum size specified. 	"
-	echo "         -m  Maximum number of simultaneous scans              	"
+	echo " NmapMe (v 0.1) 																"
+	echo " USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_OPTIONS]	"
+	echo "																				"		
+	echo " REQUIRED                                           							"
+	echo "         -t  Target IP range.                									"
+	echo "                                           									"
+	echo " OPTIONAL                                           							"
+	echo "         -s  Divide scans into chunk of maximum size specified. 				"
+	echo "         -m  Maximum number of simultaneous scans              				"
+	echo "         -n  Additional nmap arguments. Use surrounding quotes (\")      		"
 }
 
 SIZE=
 TARGET=
 MAX_SCANS=
-# Full scan
-#OPT_ARGS='-A -p- -Pn'
-# Quick scan
-OPT_ARGS='-p 80'
+NMAP_ARGS=
 
-while getopts ":s:t:m:" OPTIONS
+while [[ $# > 1 ]]
 do
-        case $OPTIONS in
-		s) 	   SIZE=$OPTARG;;
-        t)     TARGET=$OPTARG;;
-		m) 	   MAX_SCANS=$OPTARG;;
-        *)     printf "Invalid option: -$OPTARG\n" $0
-               usage
-               exit 2;;
-        esac
+key="$1"
+shift
+	case $key in
+	    -s)
+		    SIZE="$1"
+		    shift;;
+	    -t)
+		    TARGET="$1"
+		    shift;;
+	    -m)
+		    MAX_SCANS="$1"
+		    shift;;
+	    -n)
+			NMAP_ARGS="$1"
+			shift;;
+	    *)
+	        printf "Invalid option: $0\n"
+	        usage
+	        exit 2;;
+	esac
 done
 
 SIZE=${SIZE:-NULL}
 TARGET=${TARGET:-NULL}
 MAX_SCANS=${MAX_SCANS:-NULL}
-OPT_ARGS=${OPT_ARGS:-""}
+NMAP_OPT=${NMAP_OPT:-""}
+
+echo "size: ${SIZE}"
+echo "target: ${TARGET}"
+echo "max_scans: ${MAX_SCANS}"
+echo "nmap args: ${NMAP_ARGS}"
 
 ######################
 #   Output Coloring  #
@@ -86,8 +101,8 @@ else
 	screen -c ${FLAGDIR}/screenrc -d -m -S ${SESSION}
 
 	if [ $SIZE = NULL ]; then		
-		CMD_TCP="nmap -sS -v -n -Pn ${OPT_ARGS} --open ${TARGET} -oA tcp-test"
-		CMD_UDP="nmap -sU -v -n -Pn ${OPT_ARGS} --open ${TARGET} -oA udp-test"
+		CMD_TCP="nmap -sS -v -n -Pn ${NMAP_ARGS} --open ${TARGET} -oA tcp-test"
+		CMD_UDP="nmap -sU -v -n -Pn ${NMAP_ARGS} --open ${TARGET} -oA udp-test"
 
 		screen -S ${SESSION} -X screen ${CMD_TCP}
 		screen -S ${SESSION} -X screen ${CMD_UDP}
@@ -113,9 +128,9 @@ else
 
 			if [ -z "${ANSWER}" ] || [ "${ANSWER}" == 'Y' ] || [ "${ANSWER}" == 'y' ]; then
 				CMD_TCP='echo "${RANGE}" | 
-					awk -v var="${OPT_ARGS}" {'"'"'print "nmap -sS -v -n "var" --open "$1" -oA full-tcp-"$1'"'"'}'
+					awk -v var="${NMAP_ARGS}" {'"'"'print "nmap -sS -v -n "var" --open "$1" -oA full-tcp-"$1'"'"'}'
 				CMD_UDP='(echo "${RANGE}" |
-					awk -v var="${OPT_ARGS}" {'"'"'print "nmap -sU -v -n "var" --open "$1" -oA full-udp-"$1'"'"'}'		
+					awk -v var="${NMAP_ARGS}" {'"'"'print "nmap -sU -v -n "var" --open "$1" -oA full-udp-"$1'"'"'}'		
 
 				while read -r line; do
 	    			NB_SCANS=$(ps auxww | grep -v grep | grep "nmap " | wc -l) 

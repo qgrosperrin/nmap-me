@@ -17,14 +17,15 @@ This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to 
 
 ```
  NmapMe (v 0.1) 
- USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS]
+ USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_OPTIONS]
 
  REQUIRED                                           
          -t  Target IP range.                
                                            
  OPTIONAL                                           
          -s  Divide scans into chunk of maximum size specified. 
-         -m  Maximum number of simultaneous scans 
+         -m  Maximum number of simultaneous scans              
+         -n  Additional nmap arguments. Use surrounding quotes (")
 ```
 
 __Example output:__
