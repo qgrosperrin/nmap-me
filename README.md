@@ -2,13 +2,13 @@ _currently in beta_
 
 Description
 ===========
-This is a basic BASH script designed to help automate and manage nmap scans. 
+This is a basic BASH script designed to help automate and manage `nmap` scans. 
 
-The script provides the ability to separate the target range into smaller subnets to help reduce overhead when scanning big network ranges. Each individual nmap scan receives its own `screen` window within a common `screen` session, further allowing the scans to be segregated and resilient to shell disruption (e.g. via SSH). 
+The script provides the ability to separate the target range into smaller subnets to help reduce overhead when scanning big network ranges. Each individual `nmap` scan receives its own `screen` window within a common `screen` session, further allowing the scans to be segregated and resilient to shell disruption (e.g. via SSH). 
 
-Depending on the size of each resulting subnet, specified in the CLI using the '-s' argument, the script could create a huge number of nmap processes, potentially affecting the stability and availability of the target. As a result, the '-m' option can be leveraged to specify the maximum number of simultaneous nmap scans that should be running on the system. Upon reaching the maximum number specified (unlimited if un-specified), the script will wait for running nmap scans to finish before launching a new scan.
+Depending on the size of each resulting subnet, specified in the CLI using the '-s' argument, the script could create a huge number of `nmap` processes, potentially affecting the stability and availability of the target. As a result, the '-m' option can be leveraged to specify the maximum number of simultaneous `nmap` scans that should be running on the system. Upon reaching the maximum number specified (unlimited if un-specified), the script will wait for running nmap scans to finish before launching a new scan.
 
-__Note__: at the moment, the script does not make any difference between your nmap scans launched by the tool, and other nmap scans launched in the background by other users. This is a known bug. If additional scans are running on the system, it may therefore limit the tool in his ability to launch new scans.
+__Note__: at the moment, the script does not make any difference between your `nmap` scans launched by the tool, and other `nmap` scans launched in the background by other users. This is a known bug. If additional scans are running on the system, it may therefore limit the tool in his ability to launch new scans.
 
 
 Usage
@@ -28,11 +28,12 @@ This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to 
          -n  Additional nmap arguments. Use surrounding quotes (")
 ```
 
-Standard nmap TCP command:
+Standard nmap TCP command:   
 `nmap -sS -v -n ${nmap_args} --open ${target_subrange} -oA tcp-${target_subrange}`
-Standard nmap UDP command:
+Standard nmap UDP command:   
 `nmap -sU -v -n ${nmap_args} --open ${target_subrange} -oA udp-${target_subrange}`
-where ${nmap_args} will be replaced by any additional `nmap` arguments specified using the '-n' option, and ${target_subrange} will be replaced by a calculated subrange of the target specified in the CLI.
+
+Where `${nmap_args}` will be replaced by any additional `nmap` arguments specified using the '-n' option, and `${target_subrange}` will be replaced by a calculated subrange of the target specified in the CLI.
 
 
 __Example output:__
