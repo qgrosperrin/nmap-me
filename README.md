@@ -1,6 +1,17 @@
 Description
 ================================
+# Usage
+'''bash
+ NmapMe (v 0.1) 
+ USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS]
 
+ REQUIRED                                           
+         -t  Target IP range.                
+                                           
+ OPTIONAL                                           
+         -s  Divide scans into chunk of maximum size specified. 
+         -m  Maximum number of simultaneous scans  
+'''
 
 
 
