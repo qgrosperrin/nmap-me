@@ -70,8 +70,8 @@ Y
 ```
 
 __Tips:__
-Use Ctrl+a ", via standard screen shortcuts config, to navigate through the scans after re-attaching to the screen session    .
-To stop all scans running the background, use the `killall screen` command.
+- Use Ctrl+a ", via standard screen shortcuts config, to navigate through the scans after re-attaching to the screen session    .
+- To stop all scans running the background, use the `killall screen` command.
 
 
 
