@@ -24,9 +24,9 @@ This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to 
                                            
  OPTIONAL                                           
          -s  Divide scans into chunk of maximum size specified. 
-         -m  Maximum number of simultaneous scans              
-         -n  Additional nmap arguments. Use surrounding quotes (")
-             Default options include: -sS/-sU, -v, -n, -open
+         -m  Maximum number of simultaneous scans.              
+         -n  Additional nmap arguments. Use surrounding quotes (").
+             Default options include: -sS/-sU, -v, -n, --open
 ```
 
 Standard nmap TCP command used by the script:   
