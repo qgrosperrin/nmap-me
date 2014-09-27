@@ -39,8 +39,8 @@ Where `${nmap_args}` will be replaced by any additional `nmap` arguments specifi
 
 __Example output:__
 ```
-# ./nmap-me.sh -s /24 -t 192.168.25.0/20 -m 5                                                    
-TO ATTACH TO SCREEN SESSION: screen -r mysession.28805
+./nmap-me.sh -s /24 -t 192.168.25.0/20 -m 5 -n "-A -p 80"                                      
+TO ATTACH TO SCREEN SESSION: screen -r mysession.5814
 
 [*] Launching Nmap scan(s)
 [>] IP ranges chunks:
@@ -64,15 +64,15 @@ TO ATTACH TO SCREEN SESSION: screen -r mysession.28805
 [*] This script will now create as many processes, are you sure you want to continue ? [Y/n]
 Y
 [>] There are currently 0 nmap scans running on your system.
-[>] Running: nmap -sS -v -n -p 80 --open 192.168.16.0-255 -oA full-tcp-192.168.16.0-255
+[>] Running: nmap -sS -v -n -A -p 80 --open 192.168.16.0-255 -oA tcp-192.168.16.0-255
 [>] There are currently 1 nmap scans running on your system.
-[>] Running: nmap -sS -v -n -p 80 --open 192.168.17.0-255 -oA full-tcp-192.168.17.0-255
+[>] Running: nmap -sS -v -n -A -p 80 --open 192.168.17.0-255 -oA tcp-192.168.17.0-255
 [>] There are currently 2 nmap scans running on your system.
-[>] Running: nmap -sS -v -n -p 80 --open 192.168.18.0-255 -oA full-tcp-192.168.18.0-255
+[>] Running: nmap -sS -v -n -A -p 80 --open 192.168.18.0-255 -oA tcp-192.168.18.0-255
 [>] There are currently 3 nmap scans running on your system.
-[>] Running: nmap -sS -v -n -p 80 --open 192.168.19.0-255 -oA full-tcp-192.168.19.0-255
+[>] Running: nmap -sS -v -n -A -p 80 --open 192.168.19.0-255 -oA tcp-192.168.19.0-255
 [>] There are currently 4 nmap scans running on your system.
-[>] Running: nmap -sS -v -n -p 80 --open 192.168.20.0-255 -oA full-tcp-192.168.20.0-255
+[>] Running: nmap -sS -v -n -A -p 80 --open 192.168.20.0-255 -oA tcp-192.168.20.0-255
 [>] There are currently 5 nmap scans running on your system.
 [!] too much scans already. waiting to clear
 
