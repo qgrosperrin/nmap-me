@@ -61,7 +61,7 @@ TO ATTACH TO SCREEN SESSION: screen -r mysession.5814
         192.168.30.0-255
         192.168.31.0-255
 [*] The target range was divided into 16 ranges of size /24.
-[*] This script will now create as many processes, are you sure you want to continue ? [Y/n]
+[*] This script will now create maximum 5 simultaneous nmap processes, are you sure you want to continue ? [Y/n]
 Y
 [>] There are currently 0 nmap scans running on your system.
 [>] Running: nmap -sS -v -n -A -p 80 --open 192.168.16.0-255 -oA tcp-192.168.16.0-255
