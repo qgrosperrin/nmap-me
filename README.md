@@ -26,12 +26,13 @@ This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to 
          -s  Divide scans into chunk of maximum size specified. 
          -m  Maximum number of simultaneous scans              
          -n  Additional nmap arguments. Use surrounding quotes (")
+             Default options include: -sS/-sU, -v, -n, --open
 ```
 
 Standard nmap TCP command:   
-`nmap -sS -v -n ${nmap_args} --open ${target_subrange} -oA tcp-${target_subrange}`
+`nmap -sS -v -n ${nmap_args} --open ${target_subrange} -oA tcp-${target_subrange}`   
 Standard nmap UDP command:   
-`nmap -sU -v -n ${nmap_args} --open ${target_subrange} -oA udp-${target_subrange}`
+`nmap -sU -v -n ${nmap_args} --open ${target_subrange} -oA udp-${target_subrange}`   
 
 Where `${nmap_args}` will be replaced by any additional `nmap` arguments specified using the '-n' option, and `${target_subrange}` will be replaced by a calculated subrange of the target specified in the CLI.
 
