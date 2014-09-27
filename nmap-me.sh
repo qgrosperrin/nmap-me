@@ -120,10 +120,11 @@ else
 			echo -e "${green}[*]${NC} The target range was divided into $NB_PROCESS ranges of size ${SIZE}."
 			
 			if [ -z "${MAX_SCANS}" ]; then
-				echo -e "${green}[*]${NC} This script will now create as many nmap processes, are you sure you want to continue ? [Y/n]"
+				echo -e "${green}[*]${NC} This script will now create as many nmap processes."
 			else
-				echo -e "${green}[*]${NC} This script will now create maximum ${MAX_SCANS} simultaneous nmap processes, are you sure you want to continue ? [Y/n]"
+				echo -e "${green}[*]${NC} This script will now create maximum ${MAX_SCANS} simultaneous nmap processes."
 			fi
+			echo "Are you sure you want to continue ? [Y/n]"
 			read ANSWER
 
 			if [ -z "${ANSWER}" ] || [ "${ANSWER}" == 'Y' ] || [ "${ANSWER}" == 'y' ]; then
