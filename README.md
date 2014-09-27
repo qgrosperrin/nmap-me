@@ -3,12 +3,13 @@ Description
 This is a basic BASH script designed to automated and help manage nmap scans. The script provides an option to separate the target range into smaller subnets to help reduce overhead when scanning big network ranges. Each individual nmap scan receives its own 'screen' window within a common 'screen' session, further allowing the scans to be segregated and resilient to shell disruption (e.g. via SSH). Use Ctrl+a ", via standard screen shortcuts config, to navigate through the scans after re-attaching to the screen session. 
 
 Depending on the size of each resulting subnet, specified in the CLI using the '-s' argument, the script could create a huge number of nmap processes, potentially affecting the stability and availability of the target. As a result, the '-m' option can be leveraged to specify the maximum number of simultaneous nmap scans that should be running on the system. Upon reaching the maximum number specified (unlimited if un-specified), the script will wait for nmap scans running to finish before launch a new scan.
+
 __Note__: at the moment, the script does not make any difference between your nmap scans launched by the tool, and other nmap scans launched in the background by other users. This is a known bug. If additional scans are running on the system, it may therefore limit the tool in his ability to launch new scans.
 
 
 Usage
 =====
-This tool requires __nmap__ and __sipcalc__ (used by the '-s' option)  to be installed on the system.
+This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to be installed on the system.
 
 ```
  NmapMe (v 0.1) 
@@ -21,6 +22,51 @@ This tool requires __nmap__ and __sipcalc__ (used by the '-s' option)  to be ins
          -s  Divide scans into chunk of maximum size specified. 
          -m  Maximum number of simultaneous scans 
 ```
+
+__Example output:__
+```
+# ./nmap-me.sh -s /24 -t 192.168.25.0/20 -m 5                                                    
+TO ATTACH TO SCREEN SESSION: screen -r mysession.28805
+
+[*] Launching Nmap scan(s)
+[>] IP ranges chunks:
+        192.168.16.0-255
+        192.168.17.0-255
+        192.168.18.0-255
+        192.168.19.0-255
+        192.168.20.0-255
+        192.168.21.0-255
+        192.168.22.0-255
+        192.168.23.0-255
+        192.168.24.0-255
+        192.168.25.0-255
+        192.168.26.0-255
+        192.168.27.0-255
+        192.168.28.0-255
+        192.168.29.0-255
+        192.168.30.0-255
+        192.168.31.0-255
+[*] The target range was divided into 16 ranges of size /24.
+[*] This script will now create as many processes, are you sure you want to continue ? [Y/n]
+Y
+[>] There are currently 0 nmap scans running on your system.
+[>] Running: nmap -sS -v -n -p 80 --open 192.168.16.0-255 -oA full-tcp-192.168.16.0-255
+[>] There are currently 1 nmap scans running on your system.
+[>] Running: nmap -sS -v -n -p 80 --open 192.168.17.0-255 -oA full-tcp-192.168.17.0-255
+[>] There are currently 2 nmap scans running on your system.
+[>] Running: nmap -sS -v -n -p 80 --open 192.168.18.0-255 -oA full-tcp-192.168.18.0-255
+[>] There are currently 3 nmap scans running on your system.
+[>] Running: nmap -sS -v -n -p 80 --open 192.168.19.0-255 -oA full-tcp-192.168.19.0-255
+[>] There are currently 4 nmap scans running on your system.
+[>] Running: nmap -sS -v -n -p 80 --open 192.168.20.0-255 -oA full-tcp-192.168.20.0-255
+[>] There are currently 5 nmap scans running on your system.
+[!] too much scans already. waiting to clear
+
+[...]
+```
+
+To stop all scans running the background, use the `killall screen` command.
+
 
 
 License
