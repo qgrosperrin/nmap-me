@@ -4,7 +4,7 @@ Description
 ===========
 This is a basic BASH script designed to help automate and manage nmap scans. 
 
-The script provides the ability to separate the target range into smaller subnets to help reduce overhead when scanning big network ranges. Each individual nmap scan receives its own 'screen' window within a common 'screen' session, further allowing the scans to be segregated and resilient to shell disruption (e.g. via SSH). 
+The script provides the ability to separate the target range into smaller subnets to help reduce overhead when scanning big network ranges. Each individual nmap scan receives its own `screen` window within a common `screen` session, further allowing the scans to be segregated and resilient to shell disruption (e.g. via SSH). 
 
 Depending on the size of each resulting subnet, specified in the CLI using the '-s' argument, the script could create a huge number of nmap processes, potentially affecting the stability and availability of the target. As a result, the '-m' option can be leveraged to specify the maximum number of simultaneous nmap scans that should be running on the system. Upon reaching the maximum number specified (unlimited if un-specified), the script will wait for running nmap scans to finish before launching a new scan.
 
@@ -70,7 +70,7 @@ Y
 ```
 
 __Tips:__
-- Use Ctrl+a ", via standard screen shortcuts config, to navigate through the scans after re-attaching to the screen session    .
+- Use Ctrl+a " (with default `screen` shortcuts configuration) to navigate through the scans after re-attaching to the `screen` session.
 - To stop all scans running the background, use the `killall screen` command.
 
 
