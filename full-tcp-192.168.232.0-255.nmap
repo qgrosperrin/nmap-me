@@ -1,0 +1,1 @@
+# Nmap 6.47 scan initiated Mon Sep 22 16:30:44 2014 as: nmap -sS -v -n -Pn --open -oA full-tcp-192.168.232.0-255  192.168.232.0-255
