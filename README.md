@@ -75,7 +75,7 @@ Y
 [>] There are currently 4 nmap scans running on your system.
 [>] Running: nmap -sS -v -n -A -p 80 --open 192.168.20.0-255 -oA tcp-192.168.20.0-255
 [>] There are currently 5 nmap scans running on your system.
-[!] too much scans already. waiting to clear
+[!] too many scans running already. waiting to clear
 
 [...]
 ```

@@ -167,7 +167,7 @@ else
 	    				echo -e "${yellow}[>]${NC} Runnig: ${line}"
 	    				screen -S ${SESSION} -X screen ${line}
 	    			else
-	    				echo -e "${red}[!]${NC} too much scans already. waiting to clear"
+	    				echo -e "${red}[!]${NC} too many scans running already. waiting to clear"
 	    				while true; do
 	    					NB_SCANS=$(ps auxww | grep -v grep | grep "nmap " | wc -l)
 	    					if (( "${NB_SCANS}" < "$MAX_SCANS" )); then
