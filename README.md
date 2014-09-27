@@ -17,7 +17,7 @@ This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to 
 
 ```
  NmapMe (v 0.1) 
- USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_OPTIONS]
+ USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_ARGS]
 
  REQUIRED                                           
          -t  Target IP range.                
@@ -27,6 +27,13 @@ This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to 
          -m  Maximum number of simultaneous scans              
          -n  Additional nmap arguments. Use surrounding quotes (")
 ```
+
+Standard nmap TCP command:
+`nmap -sS -v -n ${nmap_args} --open ${target_subrange} -oA tcp-${target_subrange}`
+Standard nmap UDP command:
+`nmap -sU -v -n ${nmap_args} --open ${target_subrange} -oA udp-${target_subrange}`
+where ${nmap_args} will be replaced by any additional `nmap` arguments specified using the '-n' option, and ${target_subrange} will be replaced by a calculated subrange of the target specified in the CLI.
+
 
 __Example output:__
 ```
