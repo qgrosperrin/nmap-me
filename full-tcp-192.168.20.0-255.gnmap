@@ -1,2 +1,0 @@
-# Nmap 6.47 scan initiated Sat Sep 27 13:55:26 2014 as: nmap -sS -v -n -A -p4443 --open -oA full-tcp-192.168.20.0-255 192.168.20.0-255
-# Ports scanned: TCP(1;4443) UDP(0;) SCTP(0;) PROTOCOLS(0;)
