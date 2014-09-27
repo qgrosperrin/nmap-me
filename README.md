@@ -1,3 +1,5 @@
+_currently in beta_
+
 Description
 ===========
 This is a basic BASH script designed to automated and help manage nmap scans. The script provides an option to separate the target range into smaller subnets to help reduce overhead when scanning big network ranges. Each individual nmap scan receives its own 'screen' window within a common 'screen' session, further allowing the scans to be segregated and resilient to shell disruption (e.g. via SSH). Use Ctrl+a ", via standard screen shortcuts config, to navigate through the scans after re-attaching to the screen session. 
