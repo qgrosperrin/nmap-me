@@ -6,20 +6,20 @@
 
 usage() {
 	
-	echo " NmapMe (v 0.1b) 																"
-	echo " USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_ARGS]	    "
-	echo "																				"		
-	echo " REQUIRED                                           							"
-	echo "         -t       Target IP range.                							"
-	echo "                                           									"
-	echo " OPTIONAL                                           							"
-	echo "         -s       Divide scans into chunk of maximum size specified. 			"
-	echo "         -m       Maximum number of simultaneous scans.              			"
-	echo "         -n       Additional nmap arguments. Use surrounding quotes (\").     "
-	echo "                  Hardcoded options include: -v, --open. Both TCP and UDP  	"
-	echo "                  scans will be run against the target range. 				"
-	echo "         --tcp    Change TCP scanning method. Uses nmap flags (e.g. '-sT'). 	"
-	echo "                  Default is '-sS' (SYN scan). 								"
+	echo " NmapMe (v 0.1b) 																		"
+	echo " USAGE: ./nmap_me.sh -t [TARGET] [OPTIONAL_ARGUMENTS]								    "
+	echo "																						"		
+	echo " REQUIRED                                             								"
+	echo "         -t [TARGET]              Target IP range.            						"
+	echo "                                           											"
+	echo " OPTIONAL                                           									"
+	echo "         -s [SIZE]        Divide scans into chunk of maximum size specified. 			"
+	echo "         -m [MAX_SCANS]   Maximum number of simultaneous scans.              			"
+	echo "         -n [NMAP_ARGS]   Additional nmap arguments. Use surrounding quotes (\").     "
+	echo "                          Hardcoded options include: -v, --open. Both TCP and UDP  	"
+	echo "                          scans will be run against the target range. 				"
+	echo "         --tcp [TCP_FLAG] Change TCP scanning method. Uses nmap flags (e.g. '-sT'). 	"
+	echo "                          Default is '-sS' (SYN scan). 								"
 }
 
 SIZE=
