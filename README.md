@@ -20,7 +20,7 @@ This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to 
  USAGE: ./nmap_me.sh -t [TARGET] [OPTIONAL_ARGUMENTS]                                                               
 
  REQUIRED                                             
-         -t [TARGET]              Target IP range.            
+         -t [TARGET]      Target IP range.            
                                            
  OPTIONAL                                           
          -s [SIZE]        Divide scans into chunk of maximum size specified. 

@@ -10,7 +10,7 @@ usage() {
 	echo " USAGE: ./nmap_me.sh -t [TARGET] [OPTIONAL_ARGUMENTS]								    "
 	echo "																						"		
 	echo " REQUIRED                                             								"
-	echo "         -t [TARGET]              Target IP range.            						"
+	echo "         -t [TARGET]      Target IP range.            						"
 	echo "                                           											"
 	echo " OPTIONAL                                           									"
 	echo "         -s [SIZE]        Divide scans into chunk of maximum size specified. 			"
