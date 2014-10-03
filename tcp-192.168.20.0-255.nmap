@@ -1,4 +1,0 @@
-# Nmap 6.47 scan initiated Fri Oct  3 12:13:56 2014 as: nmap -sS -v -A -p 80 --open -oA tcp-192.168.20.0-255 192.168.20.0-255
-Read data files from: /usr/bin/../share/nmap
-OS and Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
-# Nmap done at Fri Oct  3 12:17:48 2014 -- 256 IP addresses (256 hosts up) scanned in 233.84 seconds
