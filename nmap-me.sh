@@ -10,7 +10,7 @@ usage() {
 	echo " USAGE: ./nmap_me.sh -t [TARGET] [OPTIONAL_ARGUMENTS]								    "
 	echo "																						"		
 	echo " REQUIRED                                             								"
-	echo "         -t [TARGET]      Target IP range.            						"
+	echo "         -t [TARGET]      Target IP range.            								"
 	echo "                                           											"
 	echo " OPTIONAL                                           									"
 	echo "         -s [SIZE]        Divide scans into chunk of maximum size specified. 			"
@@ -20,14 +20,11 @@ usage() {
 	echo "                          scans will be run against the target range. 				"
 	echo "         --tcp [TCP_FLAG] Change TCP scanning method. Uses nmap flags (e.g. '-sT'). 	"
 	echo "                          Default is '-sS' (SYN scan). 								"
+	echo "         -j, --join       Join created 'screen' session automatically. Will not 		"
+	echo "                          work well if used with '-m' limitations.							"
 }
 
-SIZE=
-TARGET=
-MAX_SCANS=
-NMAP_ARGS=
-
-while [[ $# > 1 ]]
+while [[ $# -ge 1 ]]
 do
 key="$1"
 shift
@@ -47,6 +44,8 @@ shift
 		--tcp)
 			TCP_FLAG="$1"
 			shift;;
+		-j | --join)
+			JOIN=true;;
 	    *)
 	        printf "Invalid option: $0\n"
 	        usage
@@ -59,6 +58,7 @@ TARGET=${TARGET:-NULL}
 MAX_SCANS=${MAX_SCANS:-NULL}
 NMAP_OPT=${NMAP_OPT:-""}
 TCP_FLAG=${TCP_FLAG:-"-sS"}
+JOIN=${JOIN:-NULL}
 
 ######################
 #   Output Coloring  #
@@ -110,7 +110,9 @@ else
 		screen -S ${SESSION} -X screen ${CMD_TCP}
 		screen -S ${SESSION} -X screen ${CMD_UDP}
 
-		screen -r ${SESSION}
+		if [ $JOIN ]; then
+			screen -r ${SESSION}
+		fi
 
 	else
 		# Verify that the target range is in IP format
@@ -195,7 +197,9 @@ else
 	    			fi
 				done < <(eval $CMD_UDP)
 				
-				#screen -r ${SESSION}
+				if [ $JOIN ]; then
+					screen -r ${SESSION}
+				fi
 
 			else
 				exit 1

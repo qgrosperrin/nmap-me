@@ -30,6 +30,9 @@ This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to 
                           scans will be run against the target range. 
          --tcp [TCP_FLAG] Change TCP scanning method. Uses nmap flags (e.g. '-sT'). 
                           Default is '-sS' (SYN scan). 
+         -j, --join       Join created 'screen' session automatically. Will not 
+                          work well if used with '-m' limitations.
+
 ```
 
 Standard nmap TCP command used by the script:   

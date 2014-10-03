@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 6.47 scan initiated Fri Oct  3 14:48:48 2014 as: nmap -sS -v -A -p 80 -&#45;open -oA tcp-192.168.19.0-255 192.168.19.0-255 -->
+<nmaprun scanner="nmap" args="nmap -sS -v -A -p 80 -&#45;open -oA tcp-192.168.19.0-255 192.168.19.0-255" start="1412344128" startstr="Fri Oct  3 14:48:48 2014" version="6.47" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="1" services="80"/>
+<verbose level="1"/>
+<debugging level="0"/>
+<taskbegin task="Ping Scan" time="1412344128"/>
