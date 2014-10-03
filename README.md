@@ -16,27 +16,28 @@ Usage
 This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to be installed on the system.
 
 ```
- NmapMe (v 0.1) 
- USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_ARGS]
+ NmapMe (v 0.1b) 
+ USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_ARGS]     
 
  REQUIRED                                           
-         -t  Target IP range.                
+         -t       Target IP range.                
                                            
  OPTIONAL                                           
-         -s  Divide scans into chunk of maximum size specified. 
-         -m  Maximum number of simultaneous scans.              
-         -n  Additional nmap arguments. Use surrounding quotes (").
-             Default options include: -sS/-sU, -v. Both TCP and UDP scans  
-             will be run against the target range.
+         -s       Divide scans into chunk of maximum size specified. 
+         -m       Maximum number of simultaneous scans.              
+         -n       Additional nmap arguments. Use surrounding quotes (").     
+                  Hardcoded options include: -v, --open. Both TCP and UDP  
+                  scans will be run against the target range. 
+         --tcp    Change TCP scanning method. Uses nmap flags (e.g. '-sT'). 
+                  Default is '-sS' (SYN scan).
 ```
 
 Standard nmap TCP command used by the script:   
-`nmap -sS -v -n ${nmap_args} --open ${target_subrange} -oA tcp-${target_subrange}`   
+`nmap -sS -v ${nmap_args} --open ${target_subrange} -oA tcp-${target_subrange}`   
 Standard nmap UDP command used by the script:   
-`nmap -sU -v -n ${nmap_args} --open ${target_subrange} -oA udp-${target_subrange}`   
+`nmap -sU -v ${nmap_args} --open ${target_subrange} -oA udp-${target_subrange}`   
 
 Where `${nmap_args}` will be replaced by any additional `nmap` arguments specified using the '-n' option, and `${target_subrange}` will be replaced by a calculated subrange of the target specified in the CLI.
-
 
 __Example output:__
 ```

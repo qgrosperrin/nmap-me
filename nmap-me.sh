@@ -6,18 +6,20 @@
 
 usage() {
 	
-	echo " NmapMe (v 0.1) 																"
+	echo " NmapMe (v 0.1b) 																"
 	echo " USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_ARGS]	    "
 	echo "																				"		
 	echo " REQUIRED                                           							"
-	echo "         -t  Target IP range.                									"
+	echo "         -t       Target IP range.                							"
 	echo "                                           									"
 	echo " OPTIONAL                                           							"
-	echo "         -s  Divide scans into chunk of maximum size specified. 				"
-	echo "         -m  Maximum number of simultaneous scans              				"
-	echo "         -n  Additional nmap arguments. Use surrounding quotes (\")      		"
-	echo "         Default options include: -sS/-sU, -v. Both TCP and UDP scans  		"
-	echo "         will be run against the target range.   								"
+	echo "         -s       Divide scans into chunk of maximum size specified. 			"
+	echo "         -m       Maximum number of simultaneous scans.              			"
+	echo "         -n       Additional nmap arguments. Use surrounding quotes (\").     "
+	echo "                  Hardcoded options include: -v, --open. Both TCP and UDP  	"
+	echo "                  scans will be run against the target range. 				"
+	echo "         --tcp    Change TCP scanning method. Uses nmap flags (e.g. '-sT'). 	"
+	echo "                  Default is '-sS' (SYN scan). 								"
 }
 
 SIZE=
@@ -42,6 +44,9 @@ shift
 	    -n)
 			NMAP_ARGS="$1"
 			shift;;
+		--tcp)
+			TCP_FLAG="$1"
+			shift;;
 	    *)
 	        printf "Invalid option: $0\n"
 	        usage
@@ -53,6 +58,7 @@ SIZE=${SIZE:-NULL}
 TARGET=${TARGET:-NULL}
 MAX_SCANS=${MAX_SCANS:-NULL}
 NMAP_OPT=${NMAP_OPT:-""}
+TCP_FLAG=${TCP_FLAG:-"-sS"}
 
 ######################
 #   Output Coloring  #
@@ -98,7 +104,7 @@ else
 	screen -c ${FLAGDIR}/screenrc -d -m -S ${SESSION}
 
 	if [ $SIZE = NULL ]; then		
-		CMD_TCP="nmap -sS -v ${NMAP_ARGS} --open ${TARGET} -oA tcp-${TARGET}"
+		CMD_TCP="nmap ${TCP_FLAG} -v ${NMAP_ARGS} --open ${TARGET} -oA tcp-${TARGET}"
 		CMD_UDP="nmap -sU -v ${NMAP_ARGS} --open ${TARGET} -oA udp-${TARGET}"
 
 		screen -S ${SESSION} -X screen ${CMD_TCP}
@@ -107,8 +113,16 @@ else
 		screen -r ${SESSION}
 
 	else
-		if ! command -v sipcalc >/dev/null 2>&1; then
+		# Verify that the target range is in IP format
+		if [[ ! $TARGET =~ [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}.*? ]]; then
+			echo -e "${red}[!]${NC} You don't have specified a valid IP range. You cannot use the '-s' functionality."
+			echo -e "${red}[!]${NC} Exiting..."
+			exit 1
+
+		# Verify that 'sipcalc' is in installed and in the path
+		elif ! command -v sipcalc >/dev/null 2>&1; then
 			echo -e "${red}[!]${NC} You don't have 'sipcalc' installed. You cannot use the '-s' functionality."
+			echo -e "${red}[!]${NC} Exiting..."
 			exit 1
 		
 		else
@@ -131,9 +145,9 @@ else
 
 			if [ -z "${ANSWER}" ] || [ "${ANSWER}" == 'Y' ] || [ "${ANSWER}" == 'y' ]; then
 				CMD_TCP='echo "${RANGE}" | 
-					awk -v var="${NMAP_ARGS}" {'"'"'print "nmap -sS -v -n "var" --open "$1" -oA tcp-"$1'"'"'}'
+					awk -v var="${NMAP_ARGS}" {'"'"'print "nmap '"'${TCP_FLAG}'"' -v "var" --open "$1" -oA tcp-"$1'"'"'}'
 				CMD_UDP='(echo "${RANGE}" |
-					awk -v var="${NMAP_ARGS}" {'"'"'print "nmap -sU -v -n "var" --open "$1" -oA udp-"$1'"'"'}'		
+					awk -v var="${NMAP_ARGS}" {'"'"'print "nmap -sU -v "var" --open "$1" -oA udp-"$1'"'"'}'		
 
 				while read -r line; do
 	    			NB_SCANS=$(ps auxww | grep -v grep | grep "nmap " | wc -l) 

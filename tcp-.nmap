@@ -1,0 +1,4 @@
+# Nmap 6.47 scan initiated Fri Oct  3 11:56:37 2014 as: nmap -sS -v -A -p 80 --open -oA tcp-
+Read data files from: /usr/bin/../share/nmap
+WARNING: No targets were specified, so 0 hosts scanned.
+# Nmap done at Fri Oct  3 11:56:37 2014 -- 0 IP addresses (0 hosts up) scanned in 0.58 seconds
