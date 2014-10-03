@@ -7,7 +7,7 @@
 usage() {
 	
 	echo " NmapMe (v 0.1) 																"
-	echo " USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_ARGS]	"
+	echo " USAGE: ./nmap_me.sh -s [SIZE] -t [TARGET] -m [NB_SCANS] -n [NMAP_ARGS]	    "
 	echo "																				"		
 	echo " REQUIRED                                           							"
 	echo "         -t  Target IP range.                									"
@@ -16,6 +16,8 @@ usage() {
 	echo "         -s  Divide scans into chunk of maximum size specified. 				"
 	echo "         -m  Maximum number of simultaneous scans              				"
 	echo "         -n  Additional nmap arguments. Use surrounding quotes (\")      		"
+	echo "         Default options include: -sS/-sU, -v. Both TCP and UDP scans  		"
+	echo "         will be run against the target range.   								"
 }
 
 SIZE=
@@ -96,8 +98,8 @@ else
 	screen -c ${FLAGDIR}/screenrc -d -m -S ${SESSION}
 
 	if [ $SIZE = NULL ]; then		
-		CMD_TCP="nmap -sS -v -n -Pn ${NMAP_ARGS} --open ${TARGET} -oA tcp-${TARGET}"
-		CMD_UDP="nmap -sU -v -n -Pn ${NMAP_ARGS} --open ${TARGET} -oA udp-${TARGET}"
+		CMD_TCP="nmap -sS -v ${NMAP_ARGS} --open ${TARGET} -oA tcp-${TARGET}"
+		CMD_UDP="nmap -sU -v ${NMAP_ARGS} --open ${TARGET} -oA udp-${TARGET}"
 
 		screen -S ${SESSION} -X screen ${CMD_TCP}
 		screen -S ${SESSION} -X screen ${CMD_UDP}
