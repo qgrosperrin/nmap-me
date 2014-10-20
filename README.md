@@ -1,5 +1,7 @@
 _currently in beta_
 
+[https://qgrosperrin.github.io/blog/2014/09/29/nmap-me/](https://qgrosperrin.github.io/blog/2014/09/29/nmap-me/)
+
 Description
 ===========
 This is a basic BASH script designed to help automate and manage `nmap` scans. 
