@@ -16,23 +16,24 @@ Usage
 This script requires both __nmap__ and __sipcalc__ (used by the '-s' option) to be installed on the system.
 
 ```
- NmapMe (v 0.1b) 
- USAGE: ./nmap_me.sh -t [TARGET] [OPTIONAL_ARGUMENTS]                                                               
-
- REQUIRED                                             
-         -t [TARGET]      Target IP range.            
-                                           
- OPTIONAL                                           
-         -s [SIZE]        Divide scans into chunk of maximum size specified. 
-         -m [MAX_SCANS]   Maximum number of simultaneous scans.              
-         -n [NMAP_ARGS]   Additional nmap arguments. Use surrounding quotes (").     
-                          Hardcoded options include: -v, --open. Both TCP and UDP  
-                          scans will be run against the target range. 
-         --tcp [TCP_FLAG] Change TCP scanning method. Uses nmap flags (e.g. '-sT'). 
-                          Default is '-sS' (SYN scan). 
-         -j, --join       Join created 'screen' session automatically. Will not 
-                          work well if used with '-m' limitations.
-
+ NmapMe (v 0.1b)
+ USAGE: ./nmap_me.sh -t [TARGET] [OPTIONAL_ARGUMENTS]
+ 
+ REQUIRED
+         -t [TARGET]             Target IP range.
+     OR
+         -iL [TARGET_FILE]       Use a list of target IP ranges (similar to nmap option).
+ 
+ OPTIONAL
+         -s [SIZE]               Divide scans into chunk of maximum size specified.
+         -m [MAX_SCANS]          Maximum number of simultaneous scans.
+         -n [NMAP_ARGS]          Additional nmap arguments. Use surrounding quotes (").
+                                 Hardcoded options include: -v, --open. Both TCP and UDP
+                                 scans will be run against the target range.
+         --tcp-flag [TCP_FLAG]   Change TCP scanning method. Uses nmap flags (e.g. '-sT').
+                                 Default is '-sS' (SYN scan).
+         --no-tcp                Do not run TCP scans.
+         --no-udp                Do not run UDP scans.
 ```
 
 Standard nmap TCP command used by the script:   

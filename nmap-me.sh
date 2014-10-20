@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ##################
 #      Menu      #
@@ -6,59 +6,64 @@
 
 usage() {
 	
-	echo " NmapMe (v 0.1b) 																		"
-	echo " USAGE: ./nmap_me.sh -t [TARGET] [OPTIONAL_ARGUMENTS]								    "
-	echo "																						"		
-	echo " REQUIRED                                             								"
-	echo "         -t [TARGET]      Target IP range.            								"
-	echo "                                           											"
-	echo " OPTIONAL                                           									"
-	echo "         -s [SIZE]        Divide scans into chunk of maximum size specified. 			"
-	echo "         -m [MAX_SCANS]   Maximum number of simultaneous scans.              			"
-	echo "         -n [NMAP_ARGS]   Additional nmap arguments. Use surrounding quotes (\").     "
-	echo "                          Hardcoded options include: -v, --open. Both TCP and UDP  	"
-	echo "                          scans will be run against the target range. 				"
-	echo "         --tcp [TCP_FLAG] Change TCP scanning method. Uses nmap flags (e.g. '-sT'). 	"
-	echo "                          Default is '-sS' (SYN scan). 								"
-	echo "         -j, --join       Join created 'screen' session automatically. Will not 		"
-	echo "                          work well if used with '-m' limitations.							"
+	echo " NmapMe (v 0.1b)"
+	echo " USAGE: ./nmap_me.sh -t [TARGET] [OPTIONAL_ARGUMENTS]"
+	echo " "		
+	echo " REQUIRED"
+	echo "         -t [TARGET]             Target IP range."
+	echo "     OR"
+	echo "         -iL [TARGET_FILE]       Use a list of target IP ranges (similar to nmap option)."
+	echo " "
+	echo " OPTIONAL"
+	echo "         -s [SIZE]               Divide scans into chunk of maximum size specified."
+	echo "         -m [MAX_SCANS]          Maximum number of simultaneous scans."
+	echo "         -n [NMAP_ARGS]          Additional nmap arguments. Use surrounding quotes (\")."
+	echo "                                 Hardcoded options include: -v, --open. Both TCP and UDP"
+	echo "                                 scans will be run against the target range."
+	echo "         --tcp-flag [TCP_FLAG]   Change TCP scanning method. Uses nmap flags (e.g. '-sT')."
+	echo "                                 Default is '-sS' (SYN scan)."
+	echo "         --no-tcp                Do not run TCP scans."
+	echo "         --no-udp                Do not run UDP scans."
 }
+
+SCRIPT_PATH="$0"
+VERSION="0.1 beta"
 
 while [[ $# -ge 1 ]]
 do
 key="$1"
 shift
 	case $key in
-	    -s)
-		    SIZE="$1"
-		    shift;;
-	    -t)
-		    TARGET="$1"
-		    shift;;
-	    -m)
-		    MAX_SCANS="$1"
-		    shift;;
-	    -n)
+	    	-s)
+			SIZE="$1"
+		    	shift;;
+	    	-t)
+		    	TARGET="$1"
+		    	shift;;
+		-iL) 	
+			TARGET_FILE="$1"
+			shift;;
+	    	-m)
+		    	MAX_SCANS="$1"
+		    	shift;;
+	    	-n)
 			NMAP_ARGS="$1"
 			shift;;
-		--tcp)
+		--tcp-flag)
 			TCP_FLAG="$1"
 			shift;;
-		-j | --join)
-			JOIN=true;;
-	    *)
-	        printf "Invalid option: $0\n"
-	        usage
-	        exit 2;;
+		--no-tcp)
+			NO_TCP=true;;
+                --no-udp)
+                        NO_UDP=true;;
+		*)
+	        	printf "Invalid option: $0\n"
+	        	usage
+	        	exit 2;;
 	esac
 done
 
-SIZE=${SIZE:-NULL}
-TARGET=${TARGET:-NULL}
-MAX_SCANS=${MAX_SCANS:-NULL}
-NMAP_OPT=${NMAP_OPT:-""}
 TCP_FLAG=${TCP_FLAG:-"-sS"}
-JOIN=${JOIN:-NULL}
 
 ######################
 #   Output Coloring  #
@@ -81,14 +86,36 @@ NC='\e[0m' 		# No Color
 #      Scanning      #
 ######################
 
-if [ $TARGET = NULL ]; then
+if [ -z "${TARGET}" ] && [ -z "${TARGET_FILE}" ]; then
 	usage
 
 else
+	# Check if we're root
+	if [[ $EUID -ne 0 ]]; then
+        	echo -e "${red}[!]${NC} Nmap may need to operate with elevated privileges for specific scan types (e.g. UDP, TCP SYN, etc). Run again with 'sudo'"
+  	        echo -e "${red}[!]${NC} Exiting..."
+		exit 1
+	fi
 
+	# Similar to '-iL' option in nmap. Recursive behaviour
+	if ! [ -z "${TARGET_FILE}" ]; then 
+		echo -e "${green}[*]${NC} Using target file: ${TARGET_FILE}"
+		#cat $TARGET_FILE | grep -v "#" | xargs -L1 -I '{}' echo "${SCRIPT_PATH} -t {} -n ${NMAP_ARGS}"
+		# TOFIX: need to fix arguments parsing
+		cat $TARGET_FILE | grep -v "#" | xargs -L1 -I '{}' ${SCRIPT_PATH} -t '{}' -n "${NMAP_ARGS}"
+		exit 0
+	fi
+	
+	echo -e "${yellow}[>]${NC} Scanning target ${TARGET}"
 	# Need to positively identify the session name:
-	SESSION=mysession.$$
+	SESSION=nmap-me.$$
 	echo "TO ATTACH TO SCREEN SESSION: screen -r ${SESSION}"
+	# Verify that 'screen' is in installed and in the path
+        if ! command -v screen >/dev/null 2>&1; then
+        	echo -e "${red}[!]${NC} You don't have 'screen' installed. This tool requires it."
+            echo -e "${red}[!]${NC} Exiting..."
+            exit 1
+	fi
 
 	# For signalling and stuff
 	FLAGDIR=$(mktemp -d /tmp/foo.XXXXXX)
@@ -101,17 +128,30 @@ else
 	echo ""
 	echo -e "${green}[*]${NC} Launching Nmap scan(s)"
 
+	# TOFIX: when using '-iL', the script will create several screen sessions.
+	# Ideally, we would just want one
 	screen -c ${FLAGDIR}/screenrc -d -m -S ${SESSION}
 
-	if [ $SIZE = NULL ]; then		
-		CMD_TCP="nmap ${TCP_FLAG} -v ${NMAP_ARGS} --open ${TARGET} -oA tcp-${TARGET}"
-		CMD_UDP="nmap -sU -v ${NMAP_ARGS} --open ${TARGET} -oA udp-${TARGET}"
+	# Use-case for when no size is specified (i.e. no distribution of the range needed)
+	if [ -z "${SIZE}" ]; then		
+		
+		if [[ $TARGET =~ [0-9\.]{4}/[0-9]{1,2} ]]; then
+			TARGET_DIR="`echo "${TARGET}" | sed 's/\/[0-9]*//'`"
+		else
+			TARGET_DIR="${TARGET}"
+		fi
+	
+		CMD_TCP="nmap ${TCP_FLAG} -v ${NMAP_ARGS} --open ${TARGET} -oA tcp-${TARGET_DIR}"
+		CMD_UDP="nmap -sU -v ${NMAP_ARGS} --open ${TARGET} -oA udp-${TARGET_DIR}"
 
-		screen -S ${SESSION} -X screen ${CMD_TCP}
-		screen -S ${SESSION} -X screen ${CMD_UDP}
+		if [ -z "${NO_TCP}" ]; then
+			echo -e "${yellow}[>]${NC} Running: ${CMD_TCP}" 
+			screen -S ${SESSION} -X screen ${CMD_TCP}		
+		fi		
 
-		if [ $JOIN ]; then
-			screen -r ${SESSION}
+		if [ -z "${NO_UDP}" ]; then
+			echo -e "${yellow}[>]${NC} Running: ${CMD_UDP}"
+			screen -S ${SESSION} -X screen ${CMD_UDP}
 		fi
 
 	else
@@ -146,61 +186,51 @@ else
 			read ANSWER
 
 			if [ -z "${ANSWER}" ] || [ "${ANSWER}" == 'Y' ] || [ "${ANSWER}" == 'y' ]; then
-				CMD_TCP='echo "${RANGE}" | 
-					awk -v var="${NMAP_ARGS}" {'"'"'print "nmap '"'${TCP_FLAG}'"' -v "var" --open "$1" -oA tcp-"$1'"'"'}'
-				CMD_UDP='(echo "${RANGE}" |
-					awk -v var="${NMAP_ARGS}" {'"'"'print "nmap -sU -v "var" --open "$1" -oA udp-"$1'"'"'}'		
-
-				while read -r line; do
-	    			NB_SCANS=$(ps auxww | grep -v grep | grep "nmap " | wc -l) 
-	    			echo -e "${yellow}[>]${NC} There are currently ${NB_SCANS} nmap scans running on your system." 
-
-	    			if [ ! -z "${MAX_SCANS}" ] && (( "${NB_SCANS}" < "$MAX_SCANS" )); then
-	    				echo -e "${yellow}[>]${NC} Running: ${line}"
-	    				screen -S ${SESSION} -X screen ${line}
-	    			elif [ -z "${MAX_SCANS}" ]; then
-	    				echo -e "${yellow}[>]${NC} Running: ${line}"
-	    				screen -S ${SESSION} -X screen ${line}
-	    			else
-	    				echo -e "${red}[!]${NC} too much scans already. waiting to clear"
-	    				while true; do
-	    					NB_SCANS=$(ps auxww | grep -v grep | grep "nmap " | wc -l)
-	    					if (( "${NB_SCANS}" < "$MAX_SCANS" )); then
-	    						echo "[>] Running: ${line}"
-	    						screen -S ${SESSION} -X screen ${line}
-	    						break
-	    					fi
-	    				done
-	    			fi
-				done < <(eval $CMD_TCP)
-
-				while read -r line; do
-					NB_SCANS=$(ps auxww | grep -v grep | grep "nmap " | wc -l)
-					echo "[>] There are currently ${NB_SCANS} nmap scans running on your system." 
-
-	    			if [ ! -z "${MAX_SCANS}" ] && (( "${NB_SCANS}" < "$MAX_SCANS" )); then	
-	    				echo -e "${yellow}[>]${NC} Running: ${line}"
-	    				screen -S ${SESSION} -X screen ${line}
-	    			elif [ -z "${MAX_SCANS}" ]; then
-	    				echo -e "${yellow}[>]${NC} Runnig: ${line}"
-	    				screen -S ${SESSION} -X screen ${line}
-	    			else
-	    				echo -e "${red}[!]${NC} too many scans running already. waiting to clear"
-	    				while true; do
-	    					NB_SCANS=$(ps auxww | grep -v grep | grep "nmap " | wc -l)
-	    					if (( "${NB_SCANS}" < "$MAX_SCANS" )); then
-	    						echo -e "${yellow}[>]${NC} Running: ${line}"
-	    						screen -S ${SESSION} -X screen ${line}
-	    						break
-	    					fi
-	    				done
-	    			fi
-				done < <(eval $CMD_UDP)
+				CMD_TCP='echo "${RANGE}" | awk -v var="${NMAP_ARGS}" {'"'"'print "nmap '"'${TCP_FLAG}'"' -v "var" --open "$1" -oA tcp-"$1'"'"'}'
+				CMD_UDP='echo "${RANGE}" | awk -v var="${NMAP_ARGS}" {'"'"'print "nmap -sU -v "var" --open "$1" -oA udp-"$1'"'"'}'		
 				
-				if [ $JOIN ]; then
-					screen -r ${SESSION}
+				# Using function to simplify code.	
+				__scan() {
+					if [ $1 == "tcp" ]; then
+						CMD=$CMD_TCP
+					elif [ $1 == "udp" ]; then
+						CMD=$CMD_UDP
+					fi			
+					
+					while read -r line; do
+                                	NB_SCANS=$(ps auxww | grep -v grep | grep "nmap " | wc -l) 
+                                	echo -e "${yellow}[>]${NC} There are currently ${NB_SCANS} nmap scans running on your system." 
+
+                                	if [ -z "${MAX_SCANS}" ]; then
+                                        	echo -e "${yellow}[>]${NC} Running: ${line}"
+                                        	screen -S ${SESSION} -X screen ${line}
+
+                                	elif (( "${NB_SCANS}" < "$MAX_SCANS" )); then
+                                        	echo -e "${yellow}[>]${NC} Running: ${line}"
+                                        	screen -S ${SESSION} -X screen ${line}
+                                	else
+                                        	echo -e "${red}[!]${NC} too much scans already. waiting to clear"
+                                        	while true; do
+                                                	NB_SCANS=$(ps auxww | grep -v grep | grep "nmap " | wc -l)
+                                                	if (( "${NB_SCANS}" < "$MAX_SCANS" )); then
+                                                        	echo "[>] Running: ${line}"
+                                                        	screen -S ${SESSION} -X screen ${line}
+                                                        	break
+                                                	fi
+                                        	done
+                                	fi
+                                	done < <(eval $CMD)
+				}
+
+				if [ -z "${NO_TCP}" ]; then
+					__scan tcp
+				fi
+				
+				if [ -z "${NO_UDP}" ]; then
+					__scan udp
 				fi
 
+			# If user does not want to continue.
 			else
 				exit 1
 
